@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>植物智识 - 首页</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF', // 蓝色主色调
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto { content-visibility: auto; }
+      .upload-area { @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer transition-all duration-300; }
+      .upload-area-hover { @apply border-primary bg-primary/5; }
+      .plant-card { @apply rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:scale-105; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+ 
+  <nav class="bg-white shadow-sm fixed w-full top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <i class="fa fa-leaf text-primary text-2xl mr-2"></i>
+        <h1 class="text-xl font-bold">植物智识</h1>
+      </div>
+      <div class="hidden md:flex space-x-6">
+        <a href="index.html" class="text-primary font-medium">首页</a>
+        <a href="history.html" class="text-gray-600 hover:text-primary transition-colors">历史记录</a>
+      </div>
+    </div>
+  </nav>
+
+  
+  <main class="container mx-auto px-4 pt-24 pb-16 flex-grow">
+    
+    <section class="max-w-4xl mx-auto text-center mb-16 mt-8">
+      <div class="flex justify-center mb-6">
+        
+        <img src="./favicon.ico" alt="学校校徽" class="w-16 h-16 rounded-full border-2 border-primary mr-4">
+       
+        <div>
+          <h1 class="text-4xl font-bold text-gray-800 mb-2">植物智识</h1>
+          <p class="text-primary font-medium">植物智慧识别</p>
+        </div>
+      </div>
+      
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">智能植物识别与养护系统</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto mb-8 text-lg">
+        本系统能够快速识别各类植物，提供专业养护建议，帮助您更好地了解和照顾身边的植物。
+        无论是校园里的花草，还是家中的盆栽，都能轻松识别。
+      </p>
+      
+     
+      <button id="start-btn" class="bg-primary text-white px-8 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors text-lg shadow-md">
+        <i class="fa fa-arrow-down mr-2"></i>开始使用
+      </button>
+    </section>
+
+    <section class="max-w-4xl mx-auto mb-16">
+      <img src="./banner主图校园.jpg" alt="学校照片" class="w-full h-64 md:h-80 object-cover rounded-xl shadow-md">
+    </section>
+
+    
+    <section class="max-w-4xl mx-auto mb-16">
+      <h3 class="text-xl font-bold text-center mb-6 text-gray-800">常见植物展示</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="plant-card">
+          <img src="./1.webp" alt="植物图片1" class="w-full h-40 object-cover">
+        </div>
+        <div class="plant-card">
+          <img src="./2.jpg" alt="植物图片2" class="w-full h-40 object-cover">
+        </div>
+        <div class="plant-card">
+          <img src="./v2-3b77ec5116e63d28054741a7ae2439f9_r.jpg" alt="植物图片3" class="w-full h-40 object-cover">
+        </div>
+        <div class="plant-card">
+          <img src="./4.jpg" alt="植物图片4" class="w-full h-40 object-cover">
+        </div>
+      </div>
+    </section>
+
+   
+    <div id="upload-anchor" class="max-w-2xl mx-auto">
+      <div id="upload-container" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div id="drop-area" class="upload-area">
+          <input type="file" id="file-input" accept="image/*" class="hidden">
+          <i class="fa fa-picture-o text-5xl text-gray-400 mb-4"></i>
+          <h3 class="text-lg font-medium mb-2">点击或拖拽图片到此处</h3>
+          <p class="text-gray-500 mb-6">支持JPG、PNG格式，大小不超过5MB</p>
+          <button id="select-btn" class="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+            <i class="fa fa-upload mr-2"></i>选择图片
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+ 
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 植物智识 - 植物识别与养护工具</p>
+    </div>
+  </footer>
+
+  <script>
+    let accessToken = "";
+
+    window.onload = async () => {
+      try {
+        const res = await fetch('http://localhost:3000/baidu/token');
+        const data = await res.json();
+        if (data.error) throw new Error(data.error_description);
+        accessToken = data.access_token;
+      } catch (err) {
+        alert("初始化失败：" + err.message);
+        console.error("Token获取失败：", err);
+      }
+
+      document.getElementById('start-btn').addEventListener('click', () => {
+        document.getElementById('upload-anchor').scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    };
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('select-btn').addEventListener('click', async () => {
+      const file = document.getElementById('file-input').files[0];
+      if (!file) {
+        alert("请先选择图片");
+        return;
+      }
+      if (!accessToken) {
+        alert("Token未初始化，请刷新页面");
+        return;
+      }
+
+      try {
+        const imageBase64 = await fileToBase64(file);
+        const res = await fetch('http://localhost:3000/baidu/plant', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token: accessToken, image: imageBase64 })
+        });
+        const result = await res.json();
+
+        if (result.error_code) throw new Error(result.error_msg || "识别失败");
+        if (!result.result || result.result.length === 0) throw new Error("未识别到植物");
+
+        const plantResult = {
+          plantName: result.result[0].name,
+          plantConfidence: (result.result[0].score * 100).toFixed(0),
+          identifyTime: new Date().toLocaleString(),
+          imageBase64: imageBase64
+        };
+
+        const history = JSON.parse(localStorage.getItem("plantHistory") || "[]");
+        history.unshift(plantResult);
+        localStorage.setItem("plantHistory", JSON.stringify(history.slice(0, 10)));
+
+        localStorage.setItem("currentResult", JSON.stringify(plantResult));
+        window.location.href = "result.html";
+      } catch (err) {
+        alert("识别失败：" + err.message);
+        console.error("识别错误：", err);
+      }
+    });
+
+    const dropArea = document.getElementById('drop-area');
+    dropArea.addEventListener('click', () => document.getElementById('file-input').click());
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.classList.add('upload-area-hover');
+    });
+    dropArea.addEventListener('dragleave', () => dropArea.classList.remove('upload-area-hover'));
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.classList.remove('upload-area-hover');
+      if (e.dataTransfer.files.length) {
+        document.getElementById('file-input').files = e.dataTransfer.files;
+        document.getElementById('select-btn').click();
+      }
+    });
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      if (e.target.files.length) document.getElementById('select-btn').click();
+    });
+
+
+  // 新增：图片格式与大小校验
+  function validateFile(file) {
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      alert("请上传JPG或PNG格式的图片");
+      return false;
+    }
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+      alert("图片大小不能超过5MB");
+      return false;
+    }
+    return true;
+  }
+
+  // 修改选择图片按钮点击事件（添加校验和加载状态）
+  document.getElementById('select-btn').addEventListener('click', async () => {
+    const fileInput = document.getElementById('file-input');
+    const file = fileInput.files[0];
+    
+    // 新增校验
+    if (!file || !validateFile(file)) {
+      fileInput.value = ''; // 清空无效文件
+      return;
+    }
+    
+    if (!accessToken) {
+      alert("Token未初始化，请刷新页面");
+      return;
+    }
+
+    // 新增：显示加载状态
+    const selectBtn = document.getElementById('select-btn');
+    const originalText = selectBtn.innerHTML;
+    selectBtn.disabled = true;
+    selectBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>识别中...';
+
+    try {
+      // 原有识别逻辑保持不变...
+      const imageBase64 = await fileToBase64(file);
+      const res = await fetch('http://localhost:3000/baidu/plant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access_token: accessToken, image: imageBase64 })
+      });
+      const result = await res.json();
+
+      if (result.error_code) throw new Error(result.error_msg || "识别失败");
+      if (!result.result || result.result.length === 0) throw new Error("未识别到植物");
+
+      // 新增：置信度过滤（低于50%提示）
+      if (result.result[0].score < 0.5) {
+        if (!confirm(`识别置信度较低（${(result.result[0].score*100).toFixed(0)}%），是否仍保存结果？`)) {
+          throw new Error("已取消保存低置信度结果");
+        }
+      }
+
+      // 原有结果处理逻辑...
+    } catch (err) {
+      alert("识别失败：" + err.message);
+      console.error("识别错误：", err);
+    } finally {
+      // 恢复按钮状态
+      selectBtn.disabled = false;
+      selectBtn.innerHTML = originalText;
+      fileInput.value = ''; // 清空选择，允许重新上传
+    }
+  });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>养护建议 - 植物智识</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF', // 蓝色主色调
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+  <!-- 导航栏 -->
+  <nav class="bg-white shadow-sm fixed w-full top-0 z-50">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <i class="fa fa-leaf text-primary text-2xl mr-2"></i>
+        <h1 class="text-xl font-bold">植物智识</h1>
+      </div>
+      <div class="hidden md:flex space-x-6">
+        <a href="index.html" class="text-gray-600 hover:text-primary">首页</a>
+        <a href="history.html" class="text-gray-600 hover:text-primary">历史记录</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container mx-auto px-4 pt-24 pb-16 flex-grow">
+    <div class="max-w-2xl mx-auto">
+      <!-- 返回按钮 -->
+      <a href="result.html" class="inline-flex items-center text-gray-600 mb-6 hover:text-primary">
+        <i class="fa fa-arrow-left mr-2"></i>返回结果页
+      </a>
+
+      <!-- 建议卡片 -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h2 id="advice-title" class="text-2xl font-bold mb-6"></h2>
+        <div id="advice-list" class="space-y-4 mb-8">
+          <!-- 建议内容将动态渲染 -->
+        </div>
+        <button onclick="window.location.href='index.html'" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+          <i class="fa fa-refresh mr-2"></i>识别其他植物
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 植物智识 - 学生开发的植物识别与养护工具</p>
+    </div>
+  </footer>
+
+  <script>
+    window.onload = () => {
+      const data = JSON.parse(localStorage.getItem("currentAdvice"));
+      if (!data || !data.advice) {
+        alert("未找到养护建议");
+        window.location.href = "index.html";
+        return;
+      }
+
+      // 渲染标题
+      document.getElementById("advice-title").textContent = `${data.plantName} 的养护建议`;
+
+      // 渲染建议列表
+      const adviceList = document.getElementById("advice-list");
+      const adviceItems = data.advice.split("\n")
+        .filter(item => item.trim())
+        .map((item, index) => {
+          const content = item.replace(/^\d+\.\s*/, "").trim();
+          return `
+            <div class="flex items-start gap-3 p-4 border border-gray-100 rounded-lg">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">${index + 1}</div>
+              <p class="text-gray-700">${content}</p>
+            </div>
+          `;
+        });
+
+      adviceList.innerHTML = adviceItems.join("");
+    };
+  </script>
+</body>
+</html>
